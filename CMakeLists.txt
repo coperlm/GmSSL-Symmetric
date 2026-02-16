@@ -84,9 +84,6 @@ add_library(gmssl ${src})
 
 SET_TARGET_PROPERTIES(gmssl PROPERTIES VERSION 3.1 SOVERSION 3)
 
-install(TARGETS gmssl ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/gmssl DESTINATION include)
-
 enable_testing()
 
 foreach(test_name ${tests})
