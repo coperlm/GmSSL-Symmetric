@@ -16,17 +16,6 @@
 
 const char *digests[] = {
 	"sm3",
-#ifdef ENABLE_SHA1
-	"sha1",
-#endif
-#ifdef ENABLE_SHA2
-	"sha224",
-	"sha256",
-	"sha384",
-	"sha512",
-	"sha512-224",
-	"sha512-256",
-#endif
 };
 
 int main(void)

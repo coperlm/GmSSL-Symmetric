@@ -7,6 +7,9 @@ project(GmSSL C)
 
 SET(CMAKE_PROJECT_HOMEPAGE_URL "http://gmssl.org")
 
+# Avoid conflicts with test executables in source directory
+cmake_policy(SET CMP0002 NEW)
+
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -54,20 +57,20 @@ option(ENABLE_SM4_CBC_MAC "Enable SM4-CBC-MAC" ON)
 
 option(ENABLE_SM2_EXTS "Enable SM2 Extensions" OFF)
 
-option(ENABLE_SECP256R1 "Enable ECDH/ECDSA on curve secp256r1" ON)
+option(ENABLE_SECP256R1 "Enable ECDH/ECDSA on curve secp256r1" OFF)
 
-option(ENABLE_LMS "Enable LMS/HSS signature" ON)
-option(ENABLE_XMSS "Enable XMSS/XMSS^MT signature" ON)
-option(ENABLE_SPHINCS "Enable SPHINCS+ signature" ON)
-option(ENABLE_KYBER "Enable Kyber" ON)
+option(ENABLE_LMS "Enable LMS/HSS signature" OFF)
+option(ENABLE_XMSS "Enable XMSS/XMSS^MT signature" OFF)
+option(ENABLE_SPHINCS "Enable SPHINCS+ signature" OFF)
+option(ENABLE_KYBER "Enable Kyber" OFF)
 
-option(ENABLE_SHA1 "Enable SHA1" ON)
-option(ENABLE_SHA2 "Enable SHA2" ON)
+option(ENABLE_SHA1 "Enable SHA1" OFF)
+option(ENABLE_SHA2 "Enable SHA2" OFF)
 option(ENABLE_AES "Enable AES" ON)
-option(ENABLE_CHACHA20 "Enable Chacha20" ON)
+option(ENABLE_CHACHA20 "Enable Chacha20" OFF)
 
 option(ENABLE_SKF "Enable SKF module" OFF)
-option(ENABLE_SDF "Enable SDF module" ON)
+option(ENABLE_SDF "Enable SDF module" OFF)
 
 option(ENABLE_ASM_UNDERSCORE_PREFIX "Add prefix `_` to assembly symbols" ON)
 
@@ -79,149 +82,55 @@ set(src
 	src/version.c
 	src/debug.c
 	src/sm4.c
+	src/sm4_ecb.c
 	src/sm4_cbc.c
 	src/sm4_ctr.c
+	src/sm4_cfb.c
+	src/sm4_ofb.c
+	src/sm4_ccm.c
 	src/sm4_gcm.c
+	src/sm4_xts.c
+	src/sm4_cbc_mac.c
 	src/sm3.c
 	src/sm3_hmac.c
 	src/sm3_kdf.c
 	src/sm3_pbkdf2.c
 	src/sm3_digest.c
-	src/sm2_z256.c
-	src/sm2_z256_table.c
-	src/sm2_key.c
-	src/sm2_sign.c
-	src/sm2_enc.c
-	src/sm2_exch.c
-	src/sm9_z256.c
-	src/sm9_z256_table.c
-	src/sm9_key.c
-	src/sm9_sign.c
-	src/sm9_enc.c
-	src/sm9_exch.c
-	src/zuc.c
-	src/zuc_modes.c
+	src/aes.c
+	src/aes_modes.c
 	src/block_cipher.c
 	src/digest.c
 	src/hmac.c
 	src/hkdf.c
 	src/gf128.c
 	src/ghash.c
-	src/sm4_cbc_sm3_hmac.c
-	src/sm4_ctr_sm3_hmac.c
-	src/pkcs8.c
-	src/bn.c
-	src/ec.c
-	src/rsa.c
-	src/asn1.c
 	src/hex.c
 	src/base64.c
-	src/pem.c
-	src/x509_alg.c
-	src/x509_cer.c
-	src/x509_ext.c
-	src/x509_req.c
-	src/x509_crl.c
-	src/x509_new.c
-	src/x509_key.c
-	src/cms.c
-	src/socket.c
-	src/tls.c
-	src/tls_ext.c
-	src/tls_trace.c
-	src/tlcp.c
-	src/tls12.c
-	src/tls13.c
-	src/file.c
+	src/rand_unix.c
 )
 
-set(tools
-	tools/gmssl.c
-	tools/version.c
-	tools/sm4.c
-	tools/sm4_cbc.c
-	tools/sm4_ctr.c
-	tools/sm4_gcm.c
-	tools/sm4_cbc_sm3_hmac.c
-	tools/sm4_ctr_sm3_hmac.c
-	tools/sm3.c
-	tools/sm3hmac.c
-	tools/sm3_pbkdf2.c
-	tools/sm2keygen.c
-	tools/sm2sign.c
-	tools/sm2verify.c
-	tools/sm2encrypt.c
-	tools/sm2decrypt.c
-	tools/sm9setup.c
-	tools/sm9keygen.c
-	tools/sm9sign.c
-	tools/sm9verify.c
-	tools/sm9encrypt.c
-	tools/sm9decrypt.c
-	tools/zuc.c
-	tools/rand.c
-	tools/ghash.c
-	tools/certgen.c
-	tools/certparse.c
-	tools/certverify.c
-	tools/certrevoke.c
-	tools/reqgen.c
-	tools/reqparse.c
-	tools/reqsign.c
-	tools/crlgen.c
-	tools/crlget.c
-	tools/crlparse.c
-	tools/crlverify.c
-	tools/cmssign.c
-	tools/cmsverify.c
-	tools/cmsencrypt.c
-	tools/cmsdecrypt.c
-	tools/cmsparse.c
-	tools/tlcp_client.c
-	tools/tlcp_server.c
-	tools/tls12_client.c
-	tools/tls12_server.c
-	tools/tls13_client.c
-	tools/tls13_server.c
-)
+
 
 set(tests
 	sm4
+	sm4_ecb
 	sm4_cbc
 	sm4_ctr
+	sm4_cfb
+	sm4_ofb
+	sm4_ccm
 	sm4_gcm
+	sm4_xts
+	sm4_cbc_mac
 	sm3
-	sm4_sm3_hmac
-	sm2_z256
-	sm2_key
-	sm2_sign
-	sm2_enc
-	sm9
-	zuc
+	aes
 	block_cipher
 	digest
-	hmac
 	hkdf
 	gf128
 	ghash
-	pkcs8
-	bn
-	ec
-	asn1
 	hex
 	base64
-	pem
-	x509
-	x509_oid
-	x509_alg
-	x509_str
-	x509_ext
-	x509_req
-	x509_crl
-	x509_key
-	cms
-	tls
-	tls13
 )
 
 
@@ -559,10 +468,10 @@ if (WIN32)
 elseif (APPLE)
 	list(APPEND src src/rand_apple.c src/http.c)
 elseif (HAVE_GETENTROPY)
-	list(APPEND src src/rand_unix.c src/http.c)
+	list(APPEND src src/rand_unix.c)
 	message(STATUS "have getentropy")
 else()
-	list(APPEND src src/rand.c src/http.c)
+	list(APPEND src src/rand.c)
 endif()
 
 
@@ -653,34 +562,17 @@ endif()
 
 
 if (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
-	add_executable(gmssl-bin ${tools})
-	target_link_libraries(gmssl-bin LINK_PUBLIC gmssl)
-	set_target_properties(gmssl-bin PROPERTIES RUNTIME_OUTPUT_NAME gmssl)
-	if (MINGW)
-		target_link_libraries(gmssl-bin PRIVATE Ws2_32)
-	endif()
-
+	# Command line tools removed
 	enable_testing()
-	foreach(name ${tests})
-		add_test(NAME ${name} COMMAND ${name}test)
-		add_executable(${name}test tests/${name}test.c)
-		target_link_libraries (${name}test LINK_PUBLIC gmssl)
-	endforeach()
 
-	install(TARGETS gmssl-bin RUNTIME DESTINATION bin)
 endif()
 
 if (CMAKE_C_COMPILER_ID MATCHES "MSVC")
-	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT gmssl-bin)
 	set(CMAKE_INSTALL_PREFIX "C:/Program Files/GmSSL") # change by `cmake -DCMAKE_INSTALL_PREFIX=C:\path\to\install`
-	# run `set path=%path%;C:\Program Files\GmSSL\bin`
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 
 	target_compile_options(gmssl PRIVATE /utf-8)
-	target_compile_options(gmssl-bin PRIVATE /utf-8)
 
-#	target_compile_options(gmssl PRIVATE /wd4996)
-#	target_compile_options(gmssl-bin PRIVATE /wd4996)
 endif()
 
 
@@ -690,7 +582,6 @@ add_test(NAME cert_commands COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cma
 if(NOT WIN32)
 	add_test(NAME tlcp_commands COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/tlcp_commands.cmake")
 	add_test(NAME tls12_commands COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/tls12_commands.cmake")
-	add_test(NAME tls13_commands COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/tls13_commands.cmake")
 endif()
 
 # Generate install package with cpack
