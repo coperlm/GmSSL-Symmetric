@@ -1,6 +1,8 @@
 # GmSSL-SYMMETRIC
 
-fork自GmSSL3，专注对称加密
+fork自GmSSL3，修复并整理对称加密
+
+具体包括： SM4，SM3，AES
 
 ## 编译与安装
 
