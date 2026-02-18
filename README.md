@@ -1,15 +1,15 @@
 # GmSSL-SYMMETRIC
 
-fork自GmSSL3，修复并整理对称加密
+## 改动与声明
 
-具体包括： SM4，SM3，AES
+fork自`GmSSL3`，修复并整理对称加密。此次fork的原版本执行过程中存在报错，主要集中在`TLS13`部分，此版本已经把相关调用与优化删除，并聚焦于代码的具体实现部分。具体包括： `SM4` `SM3` `AES` 三个算法，旨在学习和辅助构建`SM-FAEST`。
+
 
 ## 编译与安装
 
-GmSSL 3 采用了cmake构建系统。下载源代码后将其解压缩，进入源码目录，执行：
+采用cmake构建系统，clone并进入源码目录，执行：
 
 ```bash
-rm -rf ./build
 mkdir build
 cd build
 cmake ..
@@ -18,10 +18,10 @@ ctest
 cd ..
 ```
 
-## Result
+## 运行结果
 
 ```
-Test project /home/coper/桌面/GmSSL-Symmetric/build
+Test project /home/coper/Desktop/GmSSL-Symmetric/build
       Start  1: test_sm4
  1/12 Test  #1: test_sm4 .........................   Passed    0.23 sec
       Start  2: test_sm4_ecb
